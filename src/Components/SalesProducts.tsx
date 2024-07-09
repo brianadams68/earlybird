@@ -1,28 +1,21 @@
 import React from "react";
+import { getProductsByCategory } from "../pages/Products";
+import { Product } from "../types/Product";
 import SubNavbar from "../Components/SubNavbar";
-import { Product } from '../types/Product';
-import { products } from '../Data/productsData';
 
-export const getProductsByCategory = (category: string): Product[] => {
-  return products.filter(product => product.category === category);
-};
+const SalesProducts: React.FC = () => {
+  const salesProducts: Product[] = getProductsByCategory("sale");
 
-export const getProductsOnSale = (): Product[] => {
-  return products.filter(product => product.onSale);
-};
-
-export default function Example() {
   return (
     <div>
       <SubNavbar />
       <div className="bg-white">
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
           <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-            Customers also purchased
+            Sales Products
           </h2>
-
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {products.map((product) => (
+            {salesProducts.map((product) => (
               <div key={product.id} className="group relative">
                 <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
                   <img
@@ -54,4 +47,6 @@ export default function Example() {
       </div>
     </div>
   );
-}
+};
+
+export default SalesProducts;
