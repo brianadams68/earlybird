@@ -1,10 +1,12 @@
 import React from "react";
-import { getProductsByCategory } from "../pages/Products";
 import { Product } from "../types/Product";
 import SubNavbar from "../Components/SubNavbar";
+import { products } from "../Data/productsData";
 
 const MaleProducts: React.FC = () => {
-  const maleProducts: Product[] = getProductsByCategory("male");
+  const maleProducts: Product[] = products.filter(
+    (product) => product.category === "male"
+  );
 
   return (
     <div>
@@ -50,3 +52,4 @@ const MaleProducts: React.FC = () => {
 };
 
 export default MaleProducts;
+

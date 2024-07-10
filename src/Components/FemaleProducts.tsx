@@ -1,10 +1,13 @@
 import React from "react";
-import { getProductsByCategory } from "../pages/Products";
+import getProductsByCategory from "../pages/Products";
 import { Product } from "../types/Product";
 import SubNavbar from "../Components/SubNavbar";
+import { products } from "../Data/productsData";
 
 const FemaleProducts: React.FC = () => {
-  const femaleProducts: Product[] = getProductsByCategory("female");
+  const femaleProducts: Product[] = products.filter(
+    (product) => product.category === "female"
+  );
 
   return (
     <div>

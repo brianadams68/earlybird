@@ -1,7 +1,10 @@
+import React, { ReactNode } from 'react';
+
 export interface Product {
+    quantity: ReactNode;
     id: number;
     name: string;
-    category: string;
+    category: "male" | "female" | "sale";
     onSale: boolean;
     href: string;
     imageSrc: string;

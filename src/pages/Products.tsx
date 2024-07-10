@@ -1,17 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import SubNavbar from "../Components/SubNavbar";
-import { Product } from '../types/Product';
-import { products } from '../Data/productsData';
+import { Product } from "../types/Product";
+import { products } from "../Data/productsData";
+import ShoppingCart from "../Components/ShoppingCart";
 
-export const getProductsByCategory = (category: string): Product[] => {
-  return products.filter(product => product.category === category);
-};
+const ProductPage = () => {
+  const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
 
-export const getProductsOnSale = (): Product[] => {
-  return products.filter(product => product.onSale);
-};
+  const addToCart = (product: Product) => {
+    const index = selectedProducts.findIndex((p) => p.id === product.id);
+  
+    if (index !== -1) {
+      const updatedProducts = [...selectedProducts];
+      const existingProduct = updatedProducts[index];
+  
+      if (existingProduct && typeof existingProduct.quantity === "number") {
+        updatedProducts[index] = {
+          ...existingProduct,
+          quantity: existingProduct.quantity + 1,
+        };
+        setSelectedProducts(updatedProducts);
+      }
+    } else {
+      setSelectedProducts([...selectedProducts, { ...product, quantity: 1 }]);
+    }
+  };
 
-export default function Example() {
+  const removeProductFromCart = (productId: number) => {
+    const updatedProducts = selectedProducts.filter(
+      (product) => product.id !== productId
+    );
+    setSelectedProducts(updatedProducts);
+  };
+
   return (
     <div>
       <SubNavbar />
@@ -31,7 +52,7 @@ export default function Example() {
                     className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                   />
                 </div>
-                <div className="mt-4 flex justify-between">
+                <div className="mt-4 flex justify-between items-center">
                   <div>
                     <h3 className="text-sm text-gray-700">
                       <a href={product.href}>
@@ -46,12 +67,26 @@ export default function Example() {
                   <p className="text-sm font-medium text-gray-900">
                     {product.price}
                   </p>
+                  <button
+                    onClick={() => addToCart(product)}
+                    className="ml-4 bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded-md text-sm"
+                  >
+                    Add to Cart
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
+      {selectedProducts.length > 0 && (
+        <ShoppingCart
+          selectedProducts={selectedProducts}
+          removeProduct={removeProductFromCart}
+        />
+      )}
     </div>
   );
-}
+};
+
+export default ProductPage;
