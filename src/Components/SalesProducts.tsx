@@ -1,13 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import { Product } from "../types/Product";
 import SubNavbar from "../Components/SubNavbar";
-import getProductsByCategory from "../pages/Products";
 import { products } from "../Data/productsData";
+import ShoppingCart from "./ShoppingCart";
 
 const SalesProducts: React.FC = () => {
   const salesProducts: Product[] = products.filter(
     (product) => product.category === "sale"
   );
+
+  const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
+
+  const addToCart = (product: Product) => {
+    console.log("Add to cart clicked", product); // Debugging statement
+    const index = selectedProducts.findIndex((p) => p.id === product.id);
+
+    if (index !== -1) {
+      const updatedProducts = [...selectedProducts];
+      const existingProduct = updatedProducts[index];
+
+      if (existingProduct && typeof existingProduct.quantity === "number") {
+        updatedProducts[index] = {
+          ...existingProduct,
+          quantity: existingProduct.quantity + 1,
+        };
+        setSelectedProducts(updatedProducts);
+      }
+    } else {
+      setSelectedProducts([...selectedProducts, { ...product, quantity: 1 }]);
+    }
+    console.log("Selected products after adding", selectedProducts); // Debugging statement
+  };
+
+  const removeProductFromCart = (productId: number) => {
+    const updatedProducts = selectedProducts.filter(
+      (product) => product.id !== productId
+    );
+    setSelectedProducts(updatedProducts);
+  };
 
   return (
     <div>
@@ -20,7 +50,7 @@ const SalesProducts: React.FC = () => {
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
             {salesProducts.map((product) => (
               <div key={product.id} className="group relative">
-                <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
+                <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none lg:h-80">
                   <img
                     alt={product.imageAlt}
                     src={product.imageSrc}
@@ -42,15 +72,39 @@ const SalesProducts: React.FC = () => {
                   <p className="text-sm font-medium text-gray-900">
                     {product.price}
                   </p>
+                  <button
+                    onClick={() => addToCart(product)}
+                    className="ml-4 bg-indigo-600 hover:bg-indigo-900 active:bg-indigo-800 text-white px-2 py-1 rounded-md text-sm transform active:translate-y-0.5 active:shadow-inner transition-transform"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
+      {selectedProducts.length > 0 && (
+        <ShoppingCart
+          selectedProducts={selectedProducts}
+          removeProduct={removeProductFromCart}
+        />
+      )}
     </div>
   );
 };
 
 export default SalesProducts;
-

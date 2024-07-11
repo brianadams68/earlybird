@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/**import React from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -17,15 +17,14 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
   selectedProducts,
   removeProduct,
 }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  console.log("Selected products in ShoppingCart:", selectedProducts); // Debugging statement
 
   const calculateSubtotal = () => {
     let subtotal = 0;
     selectedProducts.forEach((product) => {
-      const price = parseFloat(product.price.replace("€", ""));
-      if (!isNaN(price) && typeof product.quantity === 'number') {
-        subtotal += price * product.quantity;
-      }
+      const price = parseFloat(product.price.replace("$", "").replace(",", ""));
+      subtotal += price * (product.quantity || 1);
     });
     return subtotal.toFixed(2);
   };
@@ -63,7 +62,6 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
           transition
           className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
         />
-
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
@@ -92,47 +90,40 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
 
                     <div className="mt-8">
                       <div className="flow-root">
-                        <ul
-                          role="list"
-                          className="-my-6 divide-y divide-gray-200"
-                        >
+                        <ul>
                           {selectedProducts.map((product) => (
-                            <li key={product.id} className="flex py-6">
-                              <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                            <li
+                              key={product.id}
+                              className="flex justify-between mb-2"
+                            >
+                              <div className="flex items-center">
                                 <img
-                                  alt={product.imageAlt}
                                   src={product.imageSrc}
-                                  className="h-full w-full object-cover object-center"
+                                  alt={product.imageAlt}
+                                  className="w-12 h-12 object-cover mr-4"
                                 />
-                              </div>
-
-                              <div className="ml-4 flex flex-1 flex-col">
                                 <div>
-                                  <div className="flex justify-between text-base font-medium text-gray-900">
-                                    <h3>
-                                      <a href={product.href}>{product.name}</a>
-                                    </h3>
-                                    <p className="ml-4">{product.price}</p>
-                                  </div>
-                                  <p className="mt-1 text-sm text-gray-500">
+                                  <h3 className="text-sm font-medium">
+                                    {product.name}
+                                  </h3>
+                                  <p className="text-sm text-gray-600">
                                     {product.color}
                                   </p>
-                                </div>
-                                <div className="flex flex-1 items-end justify-between text-sm">
-                                  <p className="text-gray-500">
-                                    Qty {product.quantity}
+                                  <p className="text-sm text-gray-600">
+                                    Quantity: {product.quantity}
                                   </p>
-
-                                  <div className="flex">
-                                    <button
-                                      type="button"
-                                      onClick={() => removeProduct(product.id)}
-                                      className="font-medium text-indigo-600 hover:text-indigo-500"
-                                    >
-                                      Remove
-                                    </button>
-                                  </div>
                                 </div>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium">
+                                  {product.price}
+                                </p>
+                                <button
+                                  onClick={() => removeProduct(product.id)}
+                                  className="text-red-500 hover:text-red-700 text-sm"
+                                >
+                                  Remove
+                                </button>
                               </div>
                             </li>
                           ))}
@@ -181,9 +172,81 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
   );
 };
 
+export default ShoppingCart;*/
+
+import React from "react";
+import { Product } from "../types/Product";
+
+type ShoppingCartProps = {
+  selectedProducts: Product[];
+  removeProduct: (productId: number) => void;
+};
+
+const ShoppingCart: React.FC<ShoppingCartProps> = ({
+  selectedProducts,
+  removeProduct,
+}) => {
+  console.log("Selected products in ShoppingCart:", selectedProducts); // Debugging statement
+
+  const calculateSubtotal = () => {
+    let subtotal = 0;
+    selectedProducts.forEach((product) => {
+      const price = parseFloat(product.price.replace("$", "").replace(",", ""));
+      subtotal += price * (product.quantity || 1);
+    });
+    return subtotal.toFixed(2);
+  };
+
+  return (
+    <div className="fixed bottom-0 right-0 m-4 p-4 bg-white shadow-lg rounded-lg">
+      <h2 className="text-xl font-bold mb-4">Shopping Cart</h2>
+      <ul>
+        {selectedProducts.map((product) => (
+          <li key={product.id} className="flex justify-between mb-2">
+            <div className="flex items-center">
+              <img
+                src={product.imageSrc}
+                alt={product.imageAlt}
+                className="w-12 h-12 object-cover mr-4"
+              />
+              <div>
+                <h3 className="text-sm font-medium">{product.name}</h3>
+                <p className="text-sm text-gray-600">{product.color}</p>
+                <p className="text-sm text-gray-600">
+                  Quantity: {product.quantity}
+                </p>
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-medium">{product.price}</p>
+              <button
+                onClick={() => removeProduct(product.id)}
+                className="text-red-500 hover:text-red-700 text-sm"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                  />
+                </svg>
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-4">
+        <p className="text-lg font-bold">Subtotal: ${calculateSubtotal()}</p>
+      </div>
+    </div>
+  );
+};
+
 export default ShoppingCart;
-
-
-
-
-
