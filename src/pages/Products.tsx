@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import SubNavbar from "../Components/SubNavbar";
 import { Product } from "../types/Product";
 import { products } from "../Data/productsData";
-import ShoppingCart from "../Components/ShoppingCart";
+import StoreNavigation from "../Components/StoreNavigation";
+import ShoppingBag from "../Components/ShoppingBag";
 
 const ProductPage = () => {
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
@@ -37,6 +38,7 @@ const ProductPage = () => {
 
   return (
     <div>
+      <StoreNavigation />
       <SubNavbar />
       <div className="bg-white">
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -95,7 +97,7 @@ const ProductPage = () => {
         </div>
       </div>
       {selectedProducts.length > 0 && (
-        <ShoppingCart
+        <ShoppingBag
           selectedProducts={selectedProducts}
           removeProduct={removeProductFromCart}
         />
